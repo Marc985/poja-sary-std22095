@@ -1,10 +1,8 @@
-package sary.hei.school.endpoint.rest.controller.health;
+package sary.hei.school.service.event;
 
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sary.hei.school.file.BucketComponent;
 
@@ -14,29 +12,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.time.Duration;
-import java.util.Optional;
 
-@RestController
-public class BlackImageController {
-    private static final String IMAGE_KEY = "image/";
+@Service
+public class SaryService {
     BucketComponent bucketComponent;
-    @GetMapping(value = "/image/{id}")
-    public ResponseEntity<String> getBlackAndWhiteImage(@PathVariable int id) {
-            String fileSuffix=".png";
-           int filePrefix=id;
-           String bucketKey=IMAGE_KEY+filePrefix+fileSuffix;
-            bucketComponent.download(bucketKey);
-            return ResponseEntity.of(Optional.of(bucketComponent.presign(bucketKey, Duration.ofMinutes(2)).toString()));
-
-    }
-
-
-
-    @PutMapping("/black/{id}")
-    public ResponseEntity<String> uploadImage(@RequestBody MultipartFile image,@PathVariable int id) throws IOException {
+    private final  String IMAGE_KEY="/image";
+    public ResponseEntity<String> operateImage(MultipartFile image, String id) throws IOException {
         BufferedImage originalImage = ImageIO.read(image.getInputStream());
         BufferedImage blackAndWhiteImage = convertToBlackAndWhite(originalImage);
         String  formatName="png";
